@@ -1,4 +1,4 @@
-package com.autoai.download.download;
+package com.autoai.download;
 
 import android.database.Cursor;
 
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.autoai.download.download.AutoaiDownload.dbUtils;
+import static com.autoai.download.AutoaiDownload.dbUtils;
 
 /**
  * 2018/12/06 dongrp

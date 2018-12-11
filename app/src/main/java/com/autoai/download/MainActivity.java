@@ -12,9 +12,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.autoai.download.download.AutoaiDownload;
-import com.autoai.download.download.DownloadInfo;
-import com.lidroid.xutils.exception.DbException;
 import com.lidroid.xutils.exception.HttpException;
 
 import java.io.File;
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements AutoaiDownload.Do
         }
     }
 
-    @Override
+/*    @Override
     protected void onResume() {
         super.onResume();
         downloadInfo = AutoaiDownload.getDownloadInfo(downloadId);
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements AutoaiDownload.Do
             progressBar.setProgress(0);
             setButtonState(DOWNLOAD_BUTTON_STATUS_START);
         }
-    }
+    }*/
 
     @OnClick({R.id.startDownload, R.id.downloading, R.id.resumeDownload, R.id.downloadDone, R.id.button4})
     public void onViewClicked(View view) {
@@ -160,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements AutoaiDownload.Do
 
     @Override
     public void onDownloadCancel(long downloadId, int downloadProgress) {
-
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.autoai.download.download;
+package com.autoai.download;
 
 import android.content.Context;
 
@@ -78,8 +78,7 @@ public class AutoaiDownload {
         }
         downloadInfo.setAutoRename(true);
         downloadInfo.setAutoResume(true);
-//        downloadInfo.setDownloadId(System.currentTimeMillis());
-        downloadInfo.setDownloadId(97658);
+        downloadInfo.setDownloadId(System.currentTimeMillis());
         try {
             downloadManager.addNewDownload(downloadInfo, downloadListener);
         } catch (DbException e) {

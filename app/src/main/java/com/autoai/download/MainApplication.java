@@ -2,8 +2,6 @@ package com.autoai.download;
 
 import android.app.Application;
 
-import com.autoai.download.download.AutoaiDownload;
-
 public class MainApplication extends Application /*implements DbUtils.DbUpgradeListener*/ {
 /*    public static DbUtils dbUtils;
     public static DownloadManager downloadManager;

@@ -1,4 +1,4 @@
-package com.autoai.download.download;
+package com.autoai.download;
 
 import com.lidroid.xutils.db.annotation.Table;
 import com.lidroid.xutils.db.annotation.Transient;
