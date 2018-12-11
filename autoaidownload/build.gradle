@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    //打jar包
+    // Copy类型
+    task makeJar(type: Jar) {
+        delete 'build/libs/' //先清空一下build/libs/目录
+        //将moudle源码生成的jar 和 moudle依赖的第三发jar 统一打包到最终的AutoaiDownload.jar
+        archiveName = 'AutoaiDownload.jar' //最终jar包的名称
+        from(project.zipTree('build/intermediates/packaged-classes/debug/classes.jar'))//moudle源码生成的jar
+        from(project.zipTree('build/intermediates/packaged-classes/debug/libs/xutilsandroid_lite.jar'))//moudle依赖的第三发jar
+        destinationDir = file('build/libs') //jar包输出路径
+    }
+    makeJar.dependsOn(build) //必须写的配置
+
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation files('libs/xutilsandroid_lite.jar')
+}
+
+
