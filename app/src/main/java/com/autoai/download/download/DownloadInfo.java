@@ -1,4 +1,4 @@
-package com.autoai.download;
+package com.autoai.download.download;
 
 import com.lidroid.xutils.db.annotation.Table;
 import com.lidroid.xutils.db.annotation.Transient;
@@ -21,7 +21,7 @@ public class DownloadInfo {
     private long fileLength;//文件的总长度
     private boolean autoResume;//是否开启断点续传
     private boolean autoRename;
-    public boolean isLoadSuccess = false;//是否下载完成
+    private boolean isLoadSuccess = false;//是否下载完成
     /*private int official_flag;
     private String app_v_id;
     private String logoUrl;

@@ -1,6 +1,5 @@
-package com.autoai.download;
+package com.autoai.download.download;
 
-import android.content.Context;
 import android.database.Cursor;
 
 import com.lidroid.xutils.HttpUtils;
@@ -20,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.autoai.download.download.AutoaiDownload.dbUtils;
+
 /**
  * 2018/12/06 dongrp
  */
@@ -29,10 +30,11 @@ public class DownloadManager {
     private List<DownloadInfo> downloadInfoList = new ArrayList<DownloadInfo>();
     private Map<Long, DownloadInfo> downloadInfoMap = new HashMap<>();
 
-    public DownloadManager(Context appContext) {
+    public DownloadManager() {
         ColumnConverterFactory.registerColumnConverter(HttpHandler.State.class, new HttpHandlerStateConverter());
+        //加载出本地数据库中的downloadInfoList
         try {
-            downloadInfoList = AutoaiDownload.dbUtils.findAll(Selector.from(DownloadInfo.class));
+            downloadInfoList = dbUtils.findAll(Selector.from(DownloadInfo.class));
             for (DownloadInfo downloadInfo : downloadInfoList) {
                 downloadInfoMap.put(downloadInfo.getDownloadId(), downloadInfo);
             }
@@ -41,45 +43,6 @@ public class DownloadManager {
         }
     }
 
-    public int getDownloadInfoListCount() {
-        return downloadInfoList.size();
-    }
-
-    public DownloadInfo getDownloadInfo(long downloadID) {
-        return downloadInfoMap.get(downloadID);
-    }
-
-    public void setMaxDownloadThread(int maxDownloadThread) {
-        //设置最大下载线程数
-        this.maxDownloadThread = maxDownloadThread;
-    }
-
-
-    /**
-     * 添加一个新的下载任务
-     *
-     * @param fileName     用户定义的下载文件名
-     * @param downloadUrl  文件网络下载路径
-     * @param fileSavePath 下载文件的本地存储路径
-     * @param downloadListener
-     * @return 返回唯一的downloadId给用户，用于后期查询
-     */
-    public DownloadInfo addNewDownload(String fileName, String downloadUrl, String fileSavePath, AutoaiDownload.DownloadListener downloadListener) throws DbException {
-        DownloadInfo downloadInfo = new DownloadInfo();
-        downloadInfo.setFileName(fileName);
-        downloadInfo.setDownloadUrl(downloadUrl);
-        if (null != fileSavePath){
-            downloadInfo.setFileSavePath(fileSavePath);
-        }else {
-            downloadInfo.setFileSavePath(AutoaiDownload.fileDownloadPath+ File.separator + fileName);
-        }
-        downloadInfo.setAutoRename(true);
-        downloadInfo.setAutoResume(true);
-        downloadInfo.setDownloadId(System.currentTimeMillis());
-//        downloadInfo.setDownloadId(97658);
-        addNewDownload(downloadInfo, downloadListener);
-        return downloadInfo;
-    }
 
     /**
      * <p>功能描述</p>添加一个新的下载文件
@@ -96,7 +59,7 @@ public class DownloadManager {
             downloadInfo.setState(handler.getState());
             downloadInfoList.add(downloadInfo);
             downloadInfoMap.put(downloadInfo.getDownloadId(), downloadInfo);
-            AutoaiDownload.dbUtils.saveBindingId(downloadInfo);
+            dbUtils.saveBindingId(downloadInfo);
         }
     }
 
@@ -110,7 +73,7 @@ public class DownloadManager {
                 downloadInfo.isAutoRename(), new ManagerCallBack(downloadInfo, downloadListener));
         downloadInfo.setHandler(handler);
         downloadInfo.setState(handler.getState());
-        AutoaiDownload.dbUtils.saveOrUpdate(downloadInfo);
+        dbUtils.saveOrUpdate(downloadInfo);
     }
 
     /**
@@ -123,7 +86,7 @@ public class DownloadManager {
         } else {
             downloadInfo.setState(HttpHandler.State.CANCELLED);
         }
-        AutoaiDownload.dbUtils.saveOrUpdate(downloadInfo);
+        dbUtils.saveOrUpdate(downloadInfo);
     }
 
     /**
@@ -136,8 +99,23 @@ public class DownloadManager {
         }
         downloadInfoList.remove(downloadInfo);
         downloadInfoMap.remove(downloadInfo.getDownloadId());
-        AutoaiDownload.dbUtils.delete(downloadInfo);
+        dbUtils.delete(downloadInfo);
     }
+
+
+    public int getDownloadInfoListCount() {
+        return downloadInfoList.size();
+    }
+
+    public void setMaxDownloadThread(int maxDownloadThread) {
+        //设置最大下载线程数
+        this.maxDownloadThread = maxDownloadThread;
+    }
+
+    public DownloadInfo getDownloadInfo(long downloadID) {
+        return downloadInfoMap.get(downloadID);
+    }
+
 
 //    /**
 //     * <p>功能描述</p>重新下载所有文件的
@@ -212,10 +190,11 @@ public class DownloadManager {
                 downloadInfo.setState(handler.getState());
             }
             try {
-                AutoaiDownload.dbUtils.saveOrUpdate(downloadInfo);
+                dbUtils.saveOrUpdate(downloadInfo);
             } catch (DbException e) {
                 e.printStackTrace();
             }
+            //back to listener
             if (downloadListener != null) {
                 if (downloadInfo != null && downloadInfo.getFileLength() > 0) {
                     downloadListener.onDownloadStart(downloadInfo.getDownloadId(), (int) (downloadInfo.getProgress() * 100 / downloadInfo.getFileLength()));
@@ -232,10 +211,11 @@ public class DownloadManager {
                 downloadInfo.setState(handler.getState());
             }
             try {
-                AutoaiDownload.dbUtils.saveOrUpdate(downloadInfo);
+                dbUtils.saveOrUpdate(downloadInfo);
             } catch (DbException e) {
                 e.printStackTrace();
             }
+            //back to listener
             if (downloadListener != null) {
                 if (downloadInfo != null && downloadInfo.getFileLength() > 0) {
                     downloadListener.onDownloadCancel(downloadInfo.getDownloadId(), (int) (downloadInfo.getProgress() * 100 / downloadInfo.getFileLength()));
@@ -254,10 +234,11 @@ public class DownloadManager {
             downloadInfo.setFileLength(total);
             downloadInfo.setProgress(current);
             try {
-                AutoaiDownload.dbUtils.saveOrUpdate(downloadInfo);
+                dbUtils.saveOrUpdate(downloadInfo);
             } catch (DbException e) {
                 e.printStackTrace();
             }
+            //back to listener
             if (downloadListener != null) {
                 downloadListener.onDownloading(downloadInfo.getDownloadId(), (int) (current * 100 / total));
             }
@@ -269,6 +250,13 @@ public class DownloadManager {
             if (handler != null) {
                 downloadInfo.setState(handler.getState());
             }
+            downloadInfo.setLoadSuccess(true);
+            try {
+                dbUtils.saveOrUpdate(downloadInfo);
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
+            //back to listener
             if (downloadListener != null) {
                 downloadListener.onDownloadSuccess(downloadInfo.getDownloadId());
             }
@@ -281,10 +269,11 @@ public class DownloadManager {
                 downloadInfo.setState(handler.getState());
             }
             try {
-                AutoaiDownload.dbUtils.saveOrUpdate(downloadInfo);
+                dbUtils.saveOrUpdate(downloadInfo);
             } catch (DbException e) {
                 e.printStackTrace();
             }
+            //back to listener
             if (downloadListener != null) {
                 downloadListener.onDownloadFail(downloadInfo.getDownloadId(), error, msg);
             }

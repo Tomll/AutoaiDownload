@@ -1,58 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="20dp"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <FrameLayout
+        android:layout_width="150dp"
+        android:layout_height="40dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:max="100"
+            android:progressDrawable="@drawable/progress_fund_detail" />
 
         <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开始" />
+            android:id="@+id/startDownload"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:text="下载"
+            android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="暂停"
-            tools:layout_editor_absoluteX="96dp"
-            tools:layout_editor_absoluteY="0dp" />
+            android:id="@+id/downloading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:text="下载中..."
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/resumeDownload"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@null"
             android:text="继续"
-            tools:layout_editor_absoluteX="195dp"
-            tools:layout_editor_absoluteY="0dp" />
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <Button
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="取消"
-            tools:layout_editor_absoluteX="291dp"
-            tools:layout_editor_absoluteY="0dp" />
-    </LinearLayout>
+            android:id="@+id/downloadDone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:text="应用主题"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+    </FrameLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="10dp"
-        android:max="100"
-        android:progressDrawable="@drawable/progress_fund_detail"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"/>
 
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="取消"
+        tools:layout_editor_absoluteX="291dp"
+        tools:layout_editor_absoluteY="0dp" />
 </LinearLayout>
